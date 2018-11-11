@@ -1,11 +1,15 @@
 import com.datastax.spark.connector.japi.CassandraRow;
 import com.datastax.spark.connector.japi.rdd.CassandraTableScanJavaRDD;
+import com.google.common.collect.ImmutableMap;
 import org.apache.spark.SparkConf;
 import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaRDD$;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.function.VoidFunction;
 import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;
 import org.apache.spark.sql.cassandra.CassandraSQLContext;
 import org.apache.zookeeper.data.Stat;
@@ -21,7 +25,7 @@ public class Main {
 
         System.out.println("Hello, World");
 
-
+        SaveDataFrame();
         SparkConf conf = new SparkConf(true)
                 .set("spark.cassandra.connection.host", "192.168.1.85");
         //.set("spark.cassandra.auth.username", "cloud")
@@ -35,6 +39,7 @@ public class Main {
 
 
         JavaRDD<CassandraRow> rdd = javaFunctions(sc).cassandraTable("analytics", "page");
+
 
           /*
         for (CassandraRow row : rdd.collect()){
@@ -81,7 +86,7 @@ public class Main {
         SparkConf conf = new SparkConf(true);
         conf.setAppName("Java API demo");
         conf.setMaster("local");
-
+        conf.set("spark.cassandra.connection.host", "192.168.1.85");
         JavaSparkContext sc = new JavaSparkContext(conf);
 
         SQLContext sqlContext = new SQLContext(sc);
@@ -89,17 +94,16 @@ public class Main {
 
 
 
-        DataFrame dataframe =  sqlContext.read()
-                .format("org.apache.spark.sql.cassandra")
-                .load();
-
-                /*
         DataFrame dataframe = sqlContext.read()
                 .format("org.apache.spark.sql.cassandra")
-                .options(ImmutableMap.of("table", "kv", "analytics", "page"))
+                .options(ImmutableMap.of("table", "page", "keyspace", "analytics"))
                 .load();
+        /*
+        for (Row row : dataframe.collect()){
+            System.out.println(row);
+        }
+       */
+         
 
-        dataframe.saveAsTable("page");
-*/
     }
 }
