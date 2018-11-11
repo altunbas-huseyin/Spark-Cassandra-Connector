@@ -23,6 +23,11 @@ public class Main {
 
     public static void main(String[] args) {
 
+        SparkBasicTest();
+    }
+
+    public static void CassandraSparkConnector()
+    {
         System.out.println("Hello, World");
 
         SaveDataFrame();
@@ -47,15 +52,27 @@ public class Main {
         }
 */
 
-        long ff = rdd.count();
+        long count = rdd.count();
         sc.close();
-        System.out.println(ff);
-
-
-
+        System.out.println(count);
 
     }
 
+
+    public static void SparkBasicTest()
+    {
+
+        SparkConf conf = new SparkConf().setMaster("local").setAppName("Word Count").setSparkHome("D:\\spark");
+
+        JavaSparkContext sc = new JavaSparkContext(conf);
+
+        List<Integer> data = Arrays.asList(1, 2, 3, 4, 5);
+        JavaRDD<Integer> distData = sc.parallelize(data);
+
+       JavaRDD<Integer> arr = sc.parallelize(distData.toArray());
+
+        System.out.println(arr.count());
+    }
 
     public static  void InnerJoin()
     {
@@ -103,7 +120,7 @@ public class Main {
             System.out.println(row);
         }
        */
-         
+
 
     }
 }
