@@ -128,7 +128,8 @@ public class Main {
             System.out.println(row);
         }
 
-
+        sqlContext.dropTempTable("page");
+        sqlContext.dropTempTable("cursor;");
 
     }
 
