@@ -23,7 +23,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        SparkBasicTest();
+        InnerJoinV2();
     }
 
     public static void CassandraSparkConnector()
@@ -97,6 +97,41 @@ public class Main {
         org.apache.spark.sql.DataFrame dataFrame = csc.sql("SELECT page.url as page_url, cursor.url as cursor_url FROM page INNER JOIN cursor on cursor.url=page.url");
         long ff =  dataFrame.count();
     }
+
+    public static  void InnerJoinV2()
+    {
+
+        SparkConf conf = new SparkConf(true);
+        conf.setAppName("Java API demo");
+        conf.setMaster("local");
+        conf.set("spark.cassandra.connection.host", "192.168.1.85");
+        JavaSparkContext sc = new JavaSparkContext(conf);
+
+        SQLContext sqlContext = new SQLContext(sc);
+
+
+
+
+        sqlContext.read()
+                .format("org.apache.spark.sql.cassandra")
+                .options(ImmutableMap.of("table", "page", "keyspace", "analytics"))
+                .load().registerTempTable("page");
+
+        sqlContext.read()
+                .format("org.apache.spark.sql.cassandra")
+                .options(ImmutableMap.of("table", "cursor", "keyspace", "analytics"))
+                .load().registerTempTable("cursor");
+
+        DataFrame nameRDD = sqlContext.sql("SELECT   count(page.url), cursor.url FROM page INNER JOIN cursor on cursor.url=page.url group by cursor.url");
+
+        for (Row row : nameRDD.collect()){
+            System.out.println(row);
+        }
+
+
+
+    }
+
     public static  void SaveDataFrame()
     {
 
